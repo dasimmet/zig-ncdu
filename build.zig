@@ -17,8 +17,19 @@ pub fn build(b: *std.Build) void {
         .strip = strip,
         .link_libc = true,
     });
-    main_mod.linkSystemLibrary("ncursesw", .{});
-    main_mod.linkSystemLibrary("zstd", .{});
+    if (b.option(bool, "no-system-libs", "") orelse false) {
+        main_mod.linkLibrary(b.dependency("ncurses", .{
+            .target = target,
+            .optimize = optimize,
+        }).artifact("ncurses"));
+        main_mod.linkLibrary(b.dependency("zstd", .{
+            .target = target,
+            .optimize = optimize,
+        }).artifact("zstd"));
+    } else {
+        main_mod.linkSystemLibrary("ncursesw", .{});
+        main_mod.linkSystemLibrary("zstd", .{});
+    }
 
     const exe = b.addExecutable(.{
         .name = "ncdu",
