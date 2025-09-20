@@ -18,14 +18,14 @@ pub fn build(b: *std.Build) void {
         .link_libc = true,
     });
     if (b.option(bool, "no-system-libs", "") orelse false) {
-        main_mod.linkLibrary(b.dependency("ncurses", .{
-            .target = target,
-            .optimize = optimize,
-        }).artifact("ncurses"));
-        main_mod.linkLibrary(b.dependency("zstd", .{
-            .target = target,
-            .optimize = optimize,
-        }).artifact("zstd"));
+        inline for (&.{ "ncurses", "zstd" }) |depname| {
+            if (b.lazyDependency(depname, .{
+                .target = target,
+                .optimize = optimize,
+            })) |nc_dep| {
+                main_mod.linkLibrary(nc_dep.artifact(depname));
+            }
+        }
     } else {
         main_mod.linkSystemLibrary("ncursesw", .{});
         main_mod.linkSystemLibrary("zstd", .{});
