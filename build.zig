@@ -5,6 +5,8 @@ const std = @import("std");
 
 const Translator = @import("translate_c").Translator;
 
+const manifest = @import("build.zig.zon");
+
 pub fn build(b: *std.Build) void {
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
@@ -29,6 +31,11 @@ pub fn build(b: *std.Build) void {
             .{ .name = "c", .module = t.mod },
         },
     });
+
+    const build_options = b.addOptions();
+    build_options.addOption([:0]const u8, "version", manifest.version);
+    main_mod.addOptions("build_options", build_options);
+
     main_mod.linkSystemLibrary("ncursesw", .{});
     main_mod.linkSystemLibrary("zstd", .{});
 
