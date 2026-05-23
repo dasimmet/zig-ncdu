@@ -58,15 +58,9 @@ dist:
 # Would be nicer to do all this with the Zig build system, but no way am I
 # going to write build.zig's for these projects.
 static-%.tar.gz:
+	# TODO: does not work right now,
+	# move as much as possible to build.zig
 	mkdir -p static-$*/nc static-$*/inst/pkg
-	cp -R zstd/lib static-$*/zstd
-	make -C static-$*/zstd -j8 libzstd.a V=1\
-		ZSTD_LIB_DICTBUILDER=0\
-		ZSTD_LIB_MINIFY=1\
-		ZSTD_LIB_EXCLUDE_COMPRESSORS_DFAST_AND_UP=1\
-		CC="${ZIG} cc --target=$*"\
-		LD="${ZIG} cc --target=$*"\
-		AR="${ZIG} ar" RANLIB="${ZIG} ranlib"
 	cd static-$*/nc && ../../ncurses/configure --prefix="`pwd`/../inst"\
 		--without-cxx --without-cxx-binding --without-ada --without-manpages --without-progs\
 		--without-tests --disable-pc-files --without-pkg-config --without-shared --without-debug\
