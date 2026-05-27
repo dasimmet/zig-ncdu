@@ -173,17 +173,3 @@ pub fn realpathZ(pathname: [*:0]const u8, out_buffer: *[max_path_bytes]u8) ![]u8
     };
     return mem.sliceTo(result_path, 0);
 }
-
-const private = struct {
-    pub const Stat = std.posix.Stat;
-    extern "c" fn @"fstatat$INODE64"(dirfd: fd_t, path: [*:0]const u8, buf: *Stat, flag: u32) c_int;
-    extern "c" fn fstatat(dirfd: fd_t, path: [*:0]const u8, buf: *Stat, flag: u32) c_int;
-};
-
-pub const fstatat = switch (native_os) {
-    .macos => switch (native_arch) {
-        .x86_64 => private.@"fstatat$INODE64",
-        else => private.fstatat,
-    },
-    else => private.fstatat,
-};
