@@ -1,3 +1,10 @@
+// SPDX-FileCopyrightText: 2026 Eric Joldasov <bratishkaerik@landless-city.net>
+//
+// SPDX-License-Identifier: MIT
+
+// Note: This manifest file was added to support the Zig package manager.
+// The original project and core source code were created by Yorhel.
+
 .{
     .fingerprint = 0x91d20145_f54c759d,
     .minimum_zig_version = "0.16.0",
