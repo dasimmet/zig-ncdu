@@ -37,13 +37,11 @@ pub fn build(b: *std.Build) void {
     });
 
     if (!use_system_ncurses) ncurses: {
-        const ncurses_dep = b.lazyDependency("ncurses", .{}) orelse break :ncurses;
-
-        const ncurses = buildNcurses(b, ncurses_dep, target.result, pie);
-        t.run.step.dependOn(&ncurses.step.step);
-        t.addIncludePath(ncurses.inst_dir.path(b, "include/ncursesw"));
-        t.addIncludePath(ncurses.inst_dir.path(b, "include"));
-        t.mod.addObjectFile(ncurses.inst_dir.path(b, "lib/libncursesw.a"));
+        const ncurses_dep = b.lazyDependency("ncurses", .{
+            .target = target,
+            .optimize = optimize,
+        }) orelse break :ncurses;
+        t.linkLibrary(ncurses_dep.artifact("ncurses"));
     }
 
     if (!use_system_zstd) zstd: {
